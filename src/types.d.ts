@@ -13,4 +13,6 @@ declare module 'types' {
     | symbol
     | bigint
     | boolean;
+
+  type Dependency = string | number | boolean | bigint | symbol | undefined;
 }

@@ -1,7 +1,7 @@
 /* @jsx createElement */
 
 import { isPrimitive } from './utils';
-import { Primitive, VirtualDOMElement } from 'types';
+import { Primitive, VirtualDOMElement, Dependency } from 'types';
 
 let stateCount = 0;
 const states: any[] = [];
@@ -9,6 +9,8 @@ const states: any[] = [];
 let root: Element;
 let app: () => VirtualDOMElement;
 let previousNode: VirtualDOMElement;
+
+let dependency: Dependency = null;
 
 export function createElement(
   tagName: string,
@@ -95,4 +97,12 @@ export function useState<T>(initialState: T): [T, (state: T) => void] {
   stateCount++;
 
   return [states[index], setState];
+}
+
+export function useEffect(callback: () => void, dependencies: [Dependency]) {
+  if (dependency === null || dependency !== dependencies[0]) {
+    dependency = dependencies[0];
+
+    callback();
+  }
 }
