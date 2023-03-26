@@ -14,9 +14,12 @@
 를 구현했다.
 
 다만 모든 html element에 props를 전달할 수 있게 코드를 짜면 작성해야 할 코드 양이 너무 방대해져서 생략했다.  
-state에 대한 변화나 이벤트를 달기 위해서는 아래처럼 timer API나 `addEventListener`를 사용해야 한다.
+state에 대한 변화나 이벤트를 달기 위해서는 아래처럼 timer API나 `addEventListener`를 사용해야 한다.  
+이외에도 일부 `react`에서 사용하는 것과 JSX 기능이 다른 게 존재할 수 있다.
 
 ```js
+// 이벤트 리스너 다는 방법
+
 const Component = () => {
   // 렌더링될 때까지 기다림
   setTimeout(() => {
@@ -33,7 +36,7 @@ const Component = () => {
 
 (프로젝트를 js로 진행한다고 가정)
 
-1. `npm install @mochang2/react && npm install -D @babel/core @babel/preset-env @babel/preset-react babel-loader html-webpack-plugin webpack webpack-cli webpack-dev-server`
+1. `npm install vanilla-to-react && npm install -D @babel/core @babel/preset-env @babel/preset-react babel-loader html-webpack-plugin webpack webpack-cli webpack-dev-server`
 
 2. `package.json` 설정
 
@@ -92,7 +95,7 @@ module.exports = {
 };
 ```
 
-4. `index.html` 선언.
+4. `src/index.html` 선언.
 
 ```html
 <!DOCTYPE html>
@@ -113,7 +116,7 @@ module.exports = {
 5. 컴포넌트 파일 구현. 파일 최상단에 바벨이 사용할 createElement 명시.
 
 ```js
-// App.js
+// src/App.js
 /* @jsx createElement */
 
 import { createElement, useState, useEffect } from '@mochang2/react';
@@ -142,7 +145,7 @@ const CoffeeList = () => {
 export default CoffeeList;
 ```
 
-6. `index.html`에서 참조하고 있는 `index.js` 구현.
+6. `src/index.html`에서 참조하고 있는 `src/index.js` 구현.
 
 ```js
 /* @jsx createElement */
