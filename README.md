@@ -1,8 +1,4 @@
-# @mochang2/react
-
-jQuery 쓰던 시절과 달리 React(Vue, Svelte 등도)는 DOM API를 쓸 필요가 없게 만들었다.  
-이를 '선언적'이라고 표현한다.  
-React는 문법에 맞춰 state만 관리하면 DOM API를 내부적으로 처리하여 사용자가 원하는 view를 손쉽게 만들 수 있도록 도와준다.
+# vanilla-to-react
 
 ### 바닐라로 React(함수형 컴포넌트) 구현하기
 
