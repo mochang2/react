@@ -7,10 +7,10 @@
     "build": "rm -rf dist/ && tsc"
   },
   "author": "mochang2",
-  "homepage": "https://github.com/mochang2/react",
+  "homepage": "https://github.com/mochang2/vanilla-to-react",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mochang2/react.git"
+    "url": "git+https://github.com/mochang2/vanilla-to-react.git"
   },
   "license": "ISC",
   "files": [
