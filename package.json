@@ -1,7 +1,7 @@
 {
   "name": "vanilla-to-react",
   "version": "1.0.4",
-  "main": "dist/react.js",
+  "browser": "dist/react.js",
   "typings": "dist/types.d.ts",
   "scripts": {
     "build": "rm -rf dist/ && tsc"
