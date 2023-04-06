@@ -119,7 +119,7 @@ module.exports = {
 // src/App.js
 /* @jsx createElement */
 
-import { createElement, useState, useEffect } from '@mochang2/react';
+import { createElement, useState, useEffect } from 'vanilla-to-react';
 
 const CoffeeList = () => {
   const [coffees, setCoffees] = useState([
@@ -150,7 +150,11 @@ export default CoffeeList;
 ```js
 /* @jsx createElement */
 
-import { createReactRoot, createElement, renderRealDOM } from '@mochang2/react';
+import {
+  createReactRoot,
+  createElement,
+  renderRealDOM,
+} from 'vanilla-to-react';
 import CoffeeList from './app.js';
 
 const root = createReactRoot(document.querySelector('#root'));
