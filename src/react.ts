@@ -1,7 +1,5 @@
-/* @jsx createElement */
-
-import { isPrimitive } from './utils';
-import { Primitive, VirtualDOMElement, Dependency } from 'types';
+import { renderRealDOM, diffingUpdate } from './dom';
+import { VirtualDOMElement, Dependency } from 'types';
 
 let stateCount = 0;
 const states: any[] = [];
@@ -36,57 +34,15 @@ export function createReactRoot(rootElement: Element | null) {
   };
 }
 
-export function renderRealDOM(VirtualDOM: VirtualDOMElement | Primitive) {
-  if (isPrimitive(VirtualDOM)) {
-    return document.createTextNode(String(VirtualDOM));
-  }
-
-  const element = document.createElement(
-    (VirtualDOM as VirtualDOMElement).tagName
-  );
-
-  (VirtualDOM as VirtualDOMElement).children
-    .map(renderRealDOM)
-    .forEach((node) => element.appendChild(node));
-
-  return element;
-}
-
-// text만 변경된 경우로 한정.
-export function diffingUpdate<
-  Next extends VirtualDOMElement | string,
-  Previous extends Next extends string ? string : VirtualDOMElement
->(parent: Node, nextNode: Next, previousNode: Previous, parentIndex = 0) {
-  if (typeof nextNode === 'string' && typeof previousNode === 'string') {
-    if ((nextNode as string) === (previousNode as string)) {
-      // update 없음
-      return;
-    }
-
-    return parent.replaceChild(
-      renderRealDOM(nextNode),
-      parent.childNodes[parentIndex]
-    );
-  }
-
-  for (const [index] of (nextNode as VirtualDOMElement).children.entries()) {
-    diffingUpdate(
-      parent.childNodes[parentIndex],
-      (nextNode as VirtualDOMElement).children[index],
-      (previousNode as VirtualDOMElement).children[index],
-      index
-    );
-  }
-}
-
 function calculateDiffing() {
+  // app 아래 컴포넌트 간 트리 구조를 가진 뒤, state가 변경된 컴포넌트 하위에서만 re-rendering이 발생해야 더 효율적인 diffing update가 가능
   const nextNode = app();
   diffingUpdate(root, nextNode, previousNode);
   previousNode = nextNode;
 }
 
 export function useState<T>(initialState: T): [T, (state: T) => void] {
-  // 새로운 state를 만들 때마다, re-rendering될 때마다 states가 늘어만 가지만 여기서는 메모리 관리에 대해서는 고민하지 않음
+  // 컴포넌트가 unmount될 때 states를 지우지 않아 메모리 관리가 비효율적임
   const index = stateCount;
 
   if (states.length === index) {
