@@ -50,7 +50,7 @@ export function useState<T>(initialState: T): [T, (state: T) => void] {
   }
 
   const setState = (nextState: T) => {
-    if (states[index] != nextState) {
+    if (states[index] === nextState) {
       // 얕은 비교
       return;
     }
