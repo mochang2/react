@@ -41,14 +41,15 @@ export function renderRealDOM(VirtualDOM: VirtualDOMElement | Primitive) {
     return document.createTextNode(String(VirtualDOM));
   }
 
-  const $Element = document.createElement(
+  const element = document.createElement(
     (VirtualDOM as VirtualDOMElement).tagName
   );
 
   (VirtualDOM as VirtualDOMElement).children
     .map(renderRealDOM)
-    .forEach((node) => $Element.appendChild(node));
-  return $Element;
+    .forEach((node) => element.appendChild(node));
+
+  return element;
 }
 
 // text만 변경된 경우로 한정.
