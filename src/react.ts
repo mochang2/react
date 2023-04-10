@@ -57,7 +57,10 @@ export function diffingUpdate<
   Previous extends Next extends string ? string : VirtualDOMElement
 >(parent: Node, nextNode: Next, previousNode: Previous, parentIndex = 0) {
   if (typeof nextNode === 'string' && typeof previousNode === 'string') {
-    if ((nextNode as string) === (previousNode as string)) return; // update 없음
+    if ((nextNode as string) === (previousNode as string)) {
+      // update 없음
+      return;
+    }
 
     return parent.replaceChild(
       renderRealDOM(nextNode),
@@ -90,6 +93,11 @@ export function useState<T>(initialState: T): [T, (state: T) => void] {
   }
 
   const setState = (nextState: T) => {
+    if (states[index] != nextState) {
+      // 얕은 비교
+      return;
+    }
+
     states[index] = nextState;
     calculateDiffing();
   };
