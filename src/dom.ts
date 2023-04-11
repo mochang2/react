@@ -1,5 +1,6 @@
+import { UPDATE_STRATEGY } from './constants';
 import { isPrimitive } from './utils';
-import { Primitive, VirtualDOMElement } from 'types';
+import { Primitive, Props, VirtualDOMElement } from 'types';
 
 export function renderRealDOM(VirtualDOM: VirtualDOMElement | Primitive) {
   if (isPrimitive(VirtualDOM)) {
@@ -30,24 +31,101 @@ export function diffingUpdate<
   Next extends VirtualDOMElement | string,
   Previous extends Next extends string ? string : VirtualDOMElement
 >(parent: Node, nextNode: Next, previousNode: Previous, parentIndex = 0) {
-  if (typeof nextNode === 'string' && typeof previousNode === 'string') {
-    if ((nextNode as string) === (previousNode as string)) {
-      // update 없음
-      return;
-    }
+  const updateStrategy = selectUpdateStrategy(nextNode, previousNode);
+  const targetNode = parent.childNodes[parentIndex];
 
-    return parent.replaceChild(
-      renderRealDOM(nextNode),
-      parent.childNodes[parentIndex]
-    );
+  switch (updateStrategy) {
+    case UPDATE_STRATEGY.IS_NON_EXISTENT_NEXT_NODE:
+      return parent.removeChild(targetNode);
+
+    case UPDATE_STRATEGY.IS_NON_EXISTENT_PREVIOUS_NODE:
+      return parent.appendChild(renderRealDOM(nextNode));
+
+    case UPDATE_STRATEGY.ARE_BOTH_STRING:
+      if ((nextNode as string) === (previousNode as string)) {
+        return;
+      }
+
+      return parent.replaceChild(renderRealDOM(nextNode), targetNode);
+
+    case UPDATE_STRATEGY.IS_DIFFERENT_TAG_NAME:
+      return parent.replaceChild(renderRealDOM(nextNode), targetNode);
+
+    default:
   }
 
-  for (const [index] of (nextNode as VirtualDOMElement).children.entries()) {
+  updateAttribute(
+    targetNode,
+    (nextNode as VirtualDOMElement).props || {},
+    (previousNode as VirtualDOMElement).props || {}
+  );
+
+  const deeperNode =
+    (nextNode as VirtualDOMElement).children.length >
+    (previousNode as VirtualDOMElement).children.length
+      ? nextNode
+      : previousNode;
+  for (const [index] of (deeperNode as VirtualDOMElement).children.entries()) {
     diffingUpdate(
-      parent.childNodes[parentIndex],
+      targetNode,
       (nextNode as VirtualDOMElement).children[index],
       (previousNode as VirtualDOMElement).children[index],
       index
     );
+  }
+}
+
+function selectUpdateStrategy<
+  Next extends VirtualDOMElement | string,
+  Previous extends Next extends string ? string : VirtualDOMElement
+>(
+  nextNode: Next,
+  previousNode: Previous
+): typeof UPDATE_STRATEGY[keyof typeof UPDATE_STRATEGY] | null {
+  if (!nextNode && previousNode) {
+    return UPDATE_STRATEGY.IS_NON_EXISTENT_NEXT_NODE;
+  }
+
+  if (nextNode && !previousNode) {
+    return UPDATE_STRATEGY.IS_NON_EXISTENT_PREVIOUS_NODE;
+  }
+
+  if (typeof nextNode === 'string' && typeof previousNode === 'string') {
+    return UPDATE_STRATEGY.ARE_BOTH_STRING;
+  }
+
+  if (
+    (nextNode as VirtualDOMElement).tagName !==
+    (previousNode as VirtualDOMElement).tagName
+  ) {
+    return UPDATE_STRATEGY.IS_DIFFERENT_TAG_NAME;
+  }
+
+  return null;
+}
+
+function updateAttribute(
+  targetNode: ChildNode,
+  nextProps: Props,
+  previousProps: Props
+) {
+  if (targetNode.nodeType !== Node.ELEMENT_NODE) {
+    return;
+  }
+
+  for (const [attr, value] of Object.entries(nextProps)) {
+    if (previousProps[attr] === nextProps[attr]) {
+      continue;
+    }
+
+    (targetNode as Element).setAttribute(attr, value);
+  }
+
+  for (const attr of Object.keys(previousProps)) {
+    if (nextProps[attr] !== undefined) {
+      continue;
+    }
+
+    (targetNode as Element).removeAttribute(attr);
   }
 }
