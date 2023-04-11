@@ -10,9 +10,17 @@ export function renderRealDOM(VirtualDOM: VirtualDOMElement | Primitive) {
     (VirtualDOM as VirtualDOMElement).tagName
   );
 
+  Object.entries((VirtualDOM as VirtualDOMElement).props || {}).forEach(
+    ([property, attribute]) => {
+      element.setAttribute(property, attribute);
+    }
+  );
+
   (VirtualDOM as VirtualDOMElement).children
     .map(renderRealDOM)
-    .forEach((node) => element.appendChild(node));
+    .forEach((node) => {
+      element.appendChild(node);
+    });
 
   return element;
 }

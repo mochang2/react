@@ -1,7 +1,7 @@
 declare module 'types' {
   interface VirtualDOMElement {
     tagName: string;
-    props?: any;
+    props?: null | { [property: string]: string };
     children: Array<VirtualDOMElement | string>;
   }
 
