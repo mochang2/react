@@ -7,7 +7,7 @@
 1. Virtual DOM
 2. JSX
 3. RealDOM 렌더링
-4. Diffing update(현재는 text가 변경된 경우로만 한정)
+4. Diffing update
 5. `useState` hook(메모리 최적화는 없음)
 6. `useEffect` hook(dependency는 null을 제외한 primitive type 1개만 넣을 수 있음. clean up 제외)
 
@@ -123,21 +123,32 @@ import { createElement, useState, useEffect } from 'vanilla-to-react';
 
 const CoffeeList = () => {
   const [coffees, setCoffees] = useState([
-    { title: '에스프레소' },
-    { title: '아메리카노' },
+    { title: '에스프레소', size: 'lg' },
+    { title: '아메리카노', size: 'lg' },
   ]);
 
   useEffect(() => {
     setTimeout(() => {
-      setCoffees([{ title: '아메리카노' }, { title: '에스프레스' }]);
+      setCoffees([
+        { title: '아메리카노', size: 'sm' },
+        { title: '에스프레스', size: 'sm' },
+        { title: '추가사항', size: 'sm' },
+      ]);
     }, 2000);
   }, []);
 
   return (
     <ul>
-      {coffees.map(({ title }) => (
-        <li>{title}</li>
-      ))}
+      {coffees.map(({ title, size }, index) =>
+        index === 2 ? (
+          <div>
+            <li class={size === 'lg' ? 'lg' : 'sm'}>{title}</li>
+            <button>버튼!</button>
+          </div>
+        ) : (
+          <li class={size === 'lg' ? 'lg' : 'sm'}>{title}</li>
+        )
+      )}
     </ul>
   );
 };
@@ -157,6 +168,6 @@ import {
 } from 'vanilla-to-react';
 import CoffeeList from './app.js';
 
-const root = createReactRoot(document.querySelector('#root'));
+const root = createReactRoot(document.querySelector('#root')); // live-dom으로 쿼리해도 상관 없음
 root.render(CoffeeList);
 ```
