@@ -1,6 +1,6 @@
 {
   "name": "vanilla-to-react",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "browser": "dist/react.js",
   "typings": "dist/types.d.ts",
   "scripts": {
