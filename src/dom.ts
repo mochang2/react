@@ -26,10 +26,12 @@ export function renderRealDOM(VirtualDOM: VirtualDOMElement | Primitive) {
   return element;
 }
 
-export function diffingUpdate<
-  Next extends VirtualDOMElement | string,
-  Previous extends Next extends string ? string : VirtualDOMElement
->(parent: Node, nextNode: Next, previousNode: Previous, parentIndex = 0) {
+export function diffingUpdate(
+  parent: Node,
+  nextNode: VirtualDOMElement | string,
+  previousNode: VirtualDOMElement | string,
+  parentIndex = 0
+) {
   const updateStrategy = selectUpdateStrategy(nextNode, previousNode);
   const targetNode = parent.childNodes[parentIndex];
 
@@ -74,12 +76,9 @@ export function diffingUpdate<
   }
 }
 
-function selectUpdateStrategy<
-  Next extends VirtualDOMElement | string,
-  Previous extends Next extends string ? string : VirtualDOMElement
->(
-  nextNode: Next,
-  previousNode: Previous
+function selectUpdateStrategy(
+  nextNode: VirtualDOMElement | string,
+  previousNode: VirtualDOMElement | string
 ): typeof UPDATE_STRATEGY[keyof typeof UPDATE_STRATEGY] | null {
   if (!nextNode && previousNode) {
     return UPDATE_STRATEGY.IS_NON_EXISTENT_NEXT_NODE;
