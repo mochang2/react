@@ -1,11 +1,11 @@
 declare module 'types' {
-  interface VirtualDOMElement {
+  type VirtualDOMElement = {
     tagName: string;
-    props?: Props;
+    props?: Prop;
     children: Array<VirtualDOMElement | string>;
-  }
+  };
 
-  type Props = null | { [property: string]: string };
+  type Prop = null | { [property: string]: string };
 
   type Primitive =
     | number

@@ -1,6 +1,6 @@
 import { UPDATE_STRATEGY } from './constants';
 import { isPrimitive } from './utils';
-import { Primitive, Props, VirtualDOMElement } from 'types';
+import type { Primitive, Prop, VirtualDOMElement } from 'types';
 
 export function renderRealDOM(VirtualDOM: VirtualDOMElement | Primitive) {
   if (isPrimitive(VirtualDOM)) {
@@ -79,7 +79,7 @@ export function diffingUpdate(
 function selectUpdateStrategy(
   nextNode: VirtualDOMElement | string,
   previousNode: VirtualDOMElement | string
-): typeof UPDATE_STRATEGY[keyof typeof UPDATE_STRATEGY] | null {
+): (typeof UPDATE_STRATEGY)[keyof typeof UPDATE_STRATEGY] | null {
   if (!nextNode && previousNode) {
     return UPDATE_STRATEGY.IS_NON_EXISTENT_NEXT_NODE;
   }
@@ -104,8 +104,8 @@ function selectUpdateStrategy(
 
 function updateAttribute(
   targetNode: ChildNode,
-  nextProps: Props,
-  previousProps: Props
+  nextProps: Prop,
+  previousProps: Prop
 ) {
   if (targetNode.nodeType !== Node.ELEMENT_NODE) {
     return;
